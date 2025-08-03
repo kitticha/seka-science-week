@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสมัครกิจกรรมสัปดาห์วันวิทยาศาสตร์ 2568 - โรงเรียนเซกา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Add Three.js for 3D background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            color: #E0E0E0;
+            background-color: #0A0A1A;
+            overflow-x: hidden;
+        }
+        
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .glass-card {
+            background: rgba(10, 10, 30, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 191, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #00BFFF, #FF69B4);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .form-input {
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .form-input::placeholder {
+            color: #a0a0a0;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #00BFFF;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A1A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00BFFF;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF69B4;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="countdown-timer" class="fixed top-0 left-0 w-full bg-black/30 text-center p-2 text-sm z-50 backdrop-blur-sm">
+        <p>🚀 เหลือเวลาอีก <span id="countdown"></span> วัน สู่สัปดาห์วิทยาศาสตร์ 2568!</p>
+    </div>
+
+    <div class="container mx-auto p-4 pt-12 relative z-10">
+
+        <!-- ===== Home Page ===== -->
+        <div id="homePage" class="page active">
+            <header class="text-center py-12">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-wider" style="text-shadow: 0 0 20px #FF69B4;">ระบบสมัครกิจกรรม</h1>
+                <h2 class="text-2xl md:text-4xl font-semibold text-sky-300" style="text-shadow: 0 0 10px #00BFFF;">สัปดาห์วันวิทยาศาสตร์ 2568</h2>
+                <p class="text-lg text-gray-300 mt-2">โรงเรียนเซกา</p>
+            </header>
+
+            <!-- ===== NEW Minimal Menu ===== -->
+            <main class="mt-12">
+                <div class="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+                    <!-- สมัครกิจกรรม -->
+                    <button onclick="showPage('registerPage')" class="group glass-card p-6 w-56 h-48 flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:-translate-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 21.75l-.648-1.188a2.25 2.25 0 01-1.4-1.4L13.25 18l1.188-.648a2.25 2.25 0 011.4 1.4l.648 1.188z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">สมัครกิจกรรม</h3>
+                    </button>
+
+                    <!-- ตรวจสอบรายชื่อ -->
+                    <button onclick="showPage('checkStatusPage')" class="group glass-card p-6 w-56 h-48 flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:-translate-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">ตรวจสอบรายชื่อ</h3>
+                    </button>
+
+                    <!-- ประกาศผล -->
+                    <button onclick="showPage('resultsPage')" class="group glass-card p-6 w-56 h-48 flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:-translate-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.31h5.418a.562.562 0 01.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988h5.418a.563.563 0 00.475-.31L11.48 3.5z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">ประกาศผล</h3>
+                    </button>
+                </div>
+            </main>
+
+            <!-- ===== Stats Section ===== -->
+             <div class="mt-16 text-center">
+                <h3 class="text-2xl font-semibold mb-6">📊 Dashboard สถิติ</h3>
+                <div class="max-w-4xl mx-auto">
+                    <div class="glass-card p-6">
+                        <h4 class="text-xl font-medium mb-4 text-sky-300">✨ จำนวนผู้สมัครแต่ละกิจกรรม</h4>
+                        <div id="activityStatsDashboard" class="space-y-4">
+                            <!-- Activity stats will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Register Page ===== -->
+        <div id="registerPage" class="page">
+            <header class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold">🔭 สมัครกิจกรรม</h2>
+                <button onclick="showPage('homePage')" class="btn-secondary px-4 py-2 rounded-lg">กลับหน้าหลัก</button>
+            </header>
+            <div id="activityList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Activity cards will be injected here by JS -->
+                 <div class="text-center col-span-full p-10 text-xl">กำลังโหลดรายการกิจกรรม... 🚀</div>
+            </div>
+        </div>
+
+        <!-- ===== Check Status Page ===== -->
+        <div id="checkStatusPage" class="page">
+            <header class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold">🔍 ตรวจสอบรายชื่อผู้สมัคร</h2>
+                <button onclick="showPage('homePage')" class="btn-secondary px-4 py-2 rounded-lg">กลับหน้าหลัก</button>
+            </header>
+            <div class="glass-card p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input id="searchName" type="text" placeholder="ค้นหาด้วยชื่อ-นามสกุล..." class="form-input p-2 rounded-lg">
+                    <input id="searchTeam" type="text" placeholder="ค้นหาด้วยชื่อทีม..." class="form-input p-2 rounded-lg">
+                    <select id="searchActivity" class="form-input p-2 rounded-lg">
+                        <option value="">ค้นหาทุกกิจกรรม</option>
+                        <!-- Options will be injected by JS -->
+                    </select>
+                </div>
+                <button onclick="searchRegistrations()" class="btn-primary w-full mt-4 py-2 rounded-lg">ค้นหา</button>
+            </div>
+            <div id="registrationResults" class="glass-card p-4">
+                <p class="text-center text-gray-400">กรุณาใช้ช่องค้นหาเพื่อแสดงรายชื่อผู้สมัคร</p>
+            </div>
+        </div>
+
+        <!-- ===== Results Page ===== -->
+        <div id="resultsPage" class="page">
+            <header class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold">📢 ประกาศผลการแข่งขัน</h2>
+                <button onclick="showPage('homePage')" class="btn-secondary px-4 py-2 rounded-lg">กลับหน้าหลัก</button>
+            </header>
+             <div class="glass-card p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select id="searchResultActivity" class="form-input p-2 rounded-lg">
+                        <option value="">ค้นหาทุกกิจกรรม</option>
+                        <!-- Options will be injected by JS -->
+                    </select>
+                     <select id="searchResultLevel" class="form-input p-2 rounded-lg">
+                        <option value="">ทุกระดับชั้น</option>
+                        <option value="ม.ต้น">ม.ต้น</option>
+                        <option value="ม.ปลาย">ม.ปลาย</option>
+                    </select>
+                </div>
+                <button onclick="searchResults()" class="btn-primary w-full mt-4 py-2 rounded-lg">ค้นหาผลการแข่งขัน</button>
+            </div>
+            <div id="competitionResultsContainer" class="space-y-6">
+                 <p class="text-center text-gray-400">กรุณาใช้ช่องค้นหาเพื่อแสดงผลการแข่งขัน</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== Registration Modal ===== -->
+    <div id="registrationModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="glass-card p-8 rounded-lg w-11/12 md:w-2/3 lg:w-1/2 max-w-3xl max-h-[90vh] overflow-y-auto">
+            <h3 id="modalActivityTitle" class="text-2xl font-bold mb-4"></h3>
+            <form id="registrationForm" onsubmit="submitRegistration(event)">
+                <div id="membersContainer" class="space-y-4 mb-4">
+                    <!-- Member fields will be added here by JS -->
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                     <div>
+                        <label class="block mb-1">ระดับชั้น (ภาพรวม)</label>
+                        <select name="level" class="form-input w-full p-2 rounded-lg" required>
+                            <option value="ม.ต้น">ม.ต้น</option>
+                            <option value="ม.ปลาย">ม.ปลาย</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label class="block mb-1">เบอร์โทรศัพท์ (ผู้ติดต่อหลัก)</label>
+                        <input type="tel" name="phone" placeholder="08xxxxxxxx" class="form-input w-full p-2 rounded-lg" required>
+                    </div>
+                </div>
+               
+                <div id="teamNameContainer" class="mb-4 hidden">
+                    <!-- Team name input and Gemini button will be injected here -->
+                </div>
+                <div id="fileUploadContainer" class="mb-4 hidden">
+                    <label class="block mb-1">ไฟล์แนบ (ถ้ามี)</label>
+                    <input type="file" name="attachment" class="form-input w-full p-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100">
+                </div>
+                <div class="mb-6">
+                    <label class="block mb-1">หมายเหตุ</label>
+                    <textarea name="notes" rows="3" placeholder="ข้อมูลเพิ่มเติม / ข้อจำกัดเฉพาะ" class="form-input w-full p-2 rounded-lg"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()" class="btn-secondary px-6 py-2 rounded-lg">ยกเลิก</button>
+                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg">ยืนยันการสมัคร</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0xUrhCFfbt5r2UUo2WKtj4WxE1C1uCcAvamveQfOP7cZ_y_O_hgbf474sv1HTyNJkVA/exec";
+        let activities = []; // Populated from Google Sheet
+        let registrations = []; // Populated from Google Sheet
+        let competitionResults = []; // Populated from Google Sheet
+        let tempRegistrationData = null;
+        let currentActivityId = null;
+        let currentPage = 'homePage';
+
+        // --- PAGE NAVIGATION ---
+        function showPage(pageId) {
+            document.getElementById(currentPage).classList.remove('active');
+            document.getElementById(pageId).classList.add('active');
+            currentPage = pageId;
+            window.scrollTo(0, 0);
+        }
+
+        // --- MODAL HANDLING ---
+        const registrationModal = document.getElementById('registrationModal');
+
+        function openModal(activityId) {
+            currentActivityId = activityId;
+            const activity = activities.find(a => a.id === activityId);
+            if (!activity) return;
+
+            document.getElementById('modalActivityTitle').innerText = `สมัคร: ${activity.name}`;
+            
+            const membersContainer = document.getElementById('membersContainer');
+            membersContainer.innerHTML = '';
+            for (let i = 0; i < activity.members; i++) {
+                const memberLabel = activity.type === 'เดี่ยว' ? 'ข้อมูลผู้สมัคร' : `ข้อมูลสมาชิกคนที่ ${i + 1}`;
+                membersContainer.innerHTML += `
+                    <div class="glass-card p-4 mb-2 rounded-md border border-purple-400/30">
+                        <p class="font-semibold mb-2">${memberLabel}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-1 text-sm">ชื่อ-นามสกุล</label>
+                                <input type="text" name="memberName${i}" placeholder="ชื่อ-นามสกุล" class="form-input w-full p-2 rounded-lg" required>
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-sm">ห้อง</label>
+                                <input type="text" name="memberClass${i}" placeholder="เช่น 1/1" class="form-input w-full p-2 rounded-lg" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const teamNameContainer = document.getElementById('teamNameContainer');
+            if (activity.type === 'ทีม' || activity.type === 'คู่') {
+                teamNameContainer.innerHTML = `
+                    <label class="block mb-1">✨ ชื่อทีม</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" name="teamName" placeholder="ชื่อทีมสุดเจ๋งของคุณ" class="form-input w-full p-2 rounded-lg" required>
+                        <button type="button" onclick="generateTeamNames()" class="btn-secondary px-3 py-2 rounded-lg text-nowrap">✨ แนะนำ</button>
+                    </div>
+                    <div id="teamNameSuggestions" class="mt-2 flex flex-wrap gap-2"></div>
+                `;
+                teamNameContainer.style.display = 'block';
+            } else {
+                teamNameContainer.style.display = 'none';
+            }
+
+            const fileUploadContainer = document.getElementById('fileUploadContainer');
+            if (activity.requires_file) {
+                fileUploadContainer.style.display = 'block';
+            } else {
+                fileUploadContainer.style.display = 'none';
+            }
+
+            document.getElementById('registrationForm').reset();
+            registrationModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            registrationModal.classList.add('hidden');
+        }
+        
+        // --- DYNAMIC CONTENT & STATS RENDERING ---
+        function updateAndRenderStats() {
+            if (activities.length === 0 || registrations.length === 0) {
+                return; // Wait until both datasets are loaded
+            }
+
+            // 1. Calculate real-time registration counts for each activity
+            const activityCounts = {};
+            registrations.forEach(reg => {
+                activityCounts[reg.activityId] = (activityCounts[reg.activityId] || 0) + 1;
+            });
+
+            // Update the main activities array with these counts
+            activities.forEach(act => {
+                act.registered_count = activityCounts[act.id] || 0;
+            });
+
+            // 2. Render the updated stats
+            renderActivityStatsDashboard();
+        }
+
+        function renderActivityStatsDashboard() {
+            const container = document.getElementById('activityStatsDashboard');
+            container.innerHTML = '';
+            if (activities.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400">กำลังรอข้อมูลกิจกรรม...</p>';
+                return;
+            }
+
+            activities.forEach(act => {
+                const percentage = act.max > 0 ? (act.registered_count / act.max) * 100 : 0;
+                const statItem = `
+                    <div>
+                        <div class="flex justify-between mb-1 text-sm">
+                            <span class="font-medium text-white">${act.name}</span>
+                            <span class="font-medium text-gray-300">${act.registered_count} / ${act.max} คน</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5">
+                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += statItem;
+            });
+        }
+
+        function renderActivities() {
+            const list = document.getElementById('activityList');
+            list.innerHTML = '';
+            if (activities.length === 0) {
+                list.innerHTML = `<div class="text-center col-span-full p-10 text-xl">ไม่พบรายการกิจกรรม หรือเกิดข้อผิดพลาดในการโหลด 🛸</div>`;
+                return;
+            }
+
+            activities.forEach(activity => {
+                const isFull = activity.registered_count >= activity.max;
+                const card = `
+                    <div class="glass-card p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-xl font-bold mb-2">${activity.name}</h4>
+                                <span class="text-sm font-semibold ${activity.type === 'เดี่ยว' ? 'bg-sky-500/50' : activity.type === 'คู่' ? 'bg-emerald-500/50' : 'bg-amber-500/50'} px-2 py-1 rounded-full">${activity.type}</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-4 h-12">${activity.description}</p>
+                            <div class="text-sm space-y-2 mb-4">
+                                <p>📅 <span class="font-semibold">วัน/เวลา:</span> ${activity.date}</p>
+                                <p>🧑‍🏫 <span class="font-semibold">ครูผู้ดูแล:</span> ${activity.teacher}</p>
+                                <p>👥 <span class="font-semibold">รับสมัคร:</span> ${activity.registered_count} / ${activity.max} ${activity.type === 'เดี่ยว' ? 'คน' : 'ทีม'}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-4">
+                            ${activity.rules_url ? `<a href="${activity.rules_url}" target="_blank" class="text-indigo-400 hover:underline">อ่านกติกา</a>` : '<div></div>'}
+                            <button 
+                                onclick="openModal(${activity.id})" 
+                                class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold ${isFull || activity.closed ? 'opacity-50 cursor-not-allowed' : ''}"
+                                ${isFull || activity.closed ? 'disabled' : ''}
+                            >
+                                ${activity.closed ? 'ปิดรับสมัคร' : isFull ? 'เต็มแล้ว' : 'สมัครเข้าร่วม'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += card;
+            });
+        }
+        
+        function populateSearchDropdowns() {
+            const activitySelect = document.getElementById('searchActivity');
+            const resultActivitySelect = document.getElementById('searchResultActivity');
+            activitySelect.innerHTML = '<option value="">ค้นหาทุกกิจกรรม</option>'; // Reset
+            resultActivitySelect.innerHTML = '<option value="">ค้นหาทุกกิจกรรม</option>'; // Reset
+            
+            activities.forEach(act => {
+                activitySelect.innerHTML += `<option value="${act.id}">${act.name}</option>`;
+                resultActivitySelect.innerHTML += `<option value="${act.id}">${act.name}</option>`;
+            });
+        }
+        
+        // --- GOOGLE SCRIPT SUBMISSION & FETCHING ---
+        function jsonpRequest(action, callback, data = null) {
+            const params = { callback, action };
+            if (data) {
+                params.data = JSON.stringify(data);
+            }
+            const queryString = new URLSearchParams(params).toString();
+            
+            const script = document.createElement('script');
+            script.src = `${SCRIPT_URL}?${queryString}`;
+            document.body.appendChild(script);
+            
+            script.onload = () => document.body.removeChild(script);
+            script.onerror = () => {
+                 document.body.removeChild(script);
+                 Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+            }
+        }
+
+        function submitRegistration(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'กรุณารอสักครู่ 🚀',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            const formData = new FormData(event.target);
+            const membersData = [];
+            const activity = activities.find(a => a.id === currentActivityId);
+            if (activity) {
+                for (let i = 0; i < activity.members; i++) {
+                    membersData.push({
+                        name: formData.get(`memberName${i}`),
+                        class: formData.get(`memberClass${i}`)
+                    });
+                }
+            }
+
+            tempRegistrationData = {
+                activityId: currentActivityId,
+                teamName: formData.get('teamName') || '',
+                members: membersData,
+                level: formData.get('level'),
+                phone: formData.get('phone'),
+                notes: formData.get('notes')
+            };
+
+            jsonpRequest('register', 'handleRegistrationResponse', tempRegistrationData);
+        }
+
+        function handleRegistrationResponse(response) {
+            if (response.status === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สมัครสำเร็จ!',
+                    text: 'ข้อมูลของคุณถูกบันทึกเรียบร้อยแล้ว ✨'
+                });
+                
+                closeModal();
+                fetchActivities(); // Refetch to update counts
+                fetchRegistrations(); // Refetch registrations to update stats
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด!',
+                    text: response.message || 'ไม่สามารถบันทึกข้อมูลได้'
+                });
+            }
+            tempRegistrationData = null;
+        }
+
+        function fetchActivities() {
+            jsonpRequest('getActivities', 'handleActivityResponse');
+        }
+
+        function handleActivityResponse(data) {
+            if (data && data.status === 'success' && Array.isArray(data.activities)) {
+                activities = data.activities;
+                populateSearchDropdowns();
+                updateAndRenderStats();
+                renderActivities();
+            } else {
+                 console.error("Failed to parse activities from Google Sheet:", data.message || 'Unknown error');
+                 document.getElementById('activityList').innerHTML = `<div class="text-center col-span-full p-10 text-xl">ไม่สามารถโหลดข้อมูลกิจกรรมได้ในขณะนี้</div>`;
+            }
+        }
+
+        function fetchRegistrations() {
+            jsonpRequest('getRegistrations', 'handleRegistrationsDataResponse');
+        }
+
+        function handleRegistrationsDataResponse(data) {
+            if (data && data.status === 'success' && Array.isArray(data.registrations)) {
+                registrations = data.registrations;
+                updateAndRenderStats();
+            } else {
+                console.error("Failed to load registrations:", data.message || 'Unknown error');
+            }
+        }
+        
+        function fetchResults() {
+            jsonpRequest('getResults', 'handleResultsDataResponse');
+        }
+
+        function handleResultsDataResponse(data) {
+            if (data && data.status === 'success' && Array.isArray(data.results)) {
+                competitionResults = data.results;
+            } else {
+                 console.error("Failed to load results:", data.message || 'Unknown error');
+            }
+        }
+
+
+        // --- SEARCH FUNCTIONALITY ---
+        function searchRegistrations() {
+            const nameQuery = document.getElementById('searchName').value.toLowerCase();
+            const teamQuery = document.getElementById('searchTeam').value.toLowerCase();
+            const activityQuery = document.getElementById('searchActivity').value;
+            
+            const results = registrations.filter(reg => {
+                const matchActivity = !activityQuery || reg.activityId == activityQuery;
+                const matchTeam = !teamQuery || (reg.teamname && reg.teamname.toLowerCase().includes(teamQuery));
+                const matchName = !nameQuery || (reg.members && reg.members.toLowerCase().includes(nameQuery));
+                return matchActivity && (matchTeam || matchName);
+            });
+
+            const resultsContainer = document.getElementById('registrationResults');
+            resultsContainer.innerHTML = '';
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p class="text-center text-gray-400 p-4">ไม่พบข้อมูลที่ตรงกับการค้นหา</p>';
+                return;
+            }
+
+            const table = document.createElement('div');
+            table.className = "overflow-x-auto";
+            table.innerHTML = `
+                <table class="w-full text-left">
+                    <thead class="border-b border-white/20">
+                        <tr>
+                            <th class="p-3">กิจกรรม</th>
+                            <th class="p-3">ชื่อทีม</th>
+                            <th class="p-3">ชื่อ-สกุล ผู้สมัคร</th>
+                            <th class="p-3">ระดับชั้น</th>
+                            <th class="p-3">สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            `;
+            const tbody = table.querySelector('tbody');
+            results.forEach(reg => {
+                const activity = activities.find(a => a.id === reg.activityId);
+                const status = reg.status || 'รอตรวจสอบ'; 
+                const statusColor = status === 'ผ่านการพิจารณา' ? 'text-green-400' : status === 'รอตรวจสอบ' ? 'text-yellow-400' : 'text-red-400';
+                const row = `
+                    <tr class="border-b border-white/10">
+                        <td class="p-3">${activity ? activity.name : 'ไม่พบกิจกรรม'}</td>
+                        <td class="p-3">${reg.teamname || '-'}</td>
+                        <td class="p-3">${reg.members}</td>
+                        <td class="p-3">${reg.level}</td>
+                        <td class="p-3 font-semibold ${statusColor}">${status}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            resultsContainer.appendChild(table);
+        }
+        
+        function searchResults() {
+            const activityQuery = document.getElementById('searchResultActivity').value;
+            const levelQuery = document.getElementById('searchResultLevel').value;
+            
+            const results = competitionResults.filter(res => {
+                const matchActivity = !activityQuery || res.activityId == activityQuery;
+                const matchLevel = !levelQuery || res.level === levelQuery;
+                return matchActivity && matchLevel;
+            });
+            
+            const container = document.getElementById('competitionResultsContainer');
+            container.innerHTML = '';
+            if (results.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400 p-4">ยังไม่มีการประกาศผลที่ตรงกับข้อมูลที่ค้นหา</p>';
+                return;
+            }
+            
+            results.forEach(res => {
+                let resultList = '';
+                res.results.forEach(r => {
+                    resultList += `<li class="flex justify-between py-1"><span class="font-semibold text-pink-400">${r.rank}:</span> <span>${r.name}</span></li>`;
+                });
+
+                const card = `
+                    <div class="glass-card p-6">
+                        <h4 class="text-2xl font-bold">${res.activityName} <span class="text-lg font-normal text-gray-300">(${res.level})</span></h4>
+                        <p class="text-sm text-gray-400 mb-4">ดูแลโดย: ${res.teacher}</p>
+                        <ul class="space-y-2 list-disc list-inside mb-4">
+                            ${resultList}
+                        </ul>
+                        ${res.file_url ? `<a href="${res.file_url}" target="_blank" class="btn-primary inline-block mt-2 px-4 py-2 rounded-lg text-sm">ดาวน์โหลดประกาศฉบับเต็ม</a>` : ''}
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+        
+        // --- COUNTDOWN TIMER ---
+        function startCountdown() {
+            const eventDate = new Date("Aug 18, 2025 09:00:00").getTime();
+            const countdownElement = document.getElementById('countdown');
+
+            const timer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `${days} วัน ${hours} ชั่วโมง ${minutes} นาที ${seconds} วินาที`;
+
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.getElementById('countdown-timer').innerHTML = "<p>🎉 สัปดาห์วิทยาศาสตร์ 2568 เริ่มขึ้นแล้ว! 🎉</p>";
+                }
+            }, 1000);
+        }
+
+        // --- 3D Background ---
+        let scene, camera, renderer, stars;
+
+        function init3DBackground() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 1;
+            
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.querySelector('#bg-canvas'),
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            const starGeo = new THREE.BufferGeometry();
+            const starVertices = [];
+            for(let i=0; i<6000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+            let sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png');
+            let starMaterial = new THREE.PointsMaterial({
+                color: 0xaaaaaa,
+                size: 0.7,
+                map: sprite
+            });
+
+            stars = new THREE.Points(starGeo, starMaterial);
+            scene.add(stars);
+
+            window.addEventListener('resize', onWindowResize, false);
+            animate3D();
+        }
+
+        function animate3D() {
+            stars.rotation.x += 0.0001;
+            stars.rotation.y += 0.0001;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate3D);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            init3DBackground();
+            fetchActivities();
+            fetchRegistrations();
+            fetchResults();
+            startCountdown();
+        };
+
+    </script>
+</body>
+</html>
+
+
